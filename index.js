@@ -56,11 +56,16 @@ app.post("/api/user/login", (req, res) => {
     //generate Token
     user.generateToken((err, user) => {
       if (err) return res.status(400).send(err);
-      res
-        .cookie("x_auth", user.token)
-        .status(200)
-        .json({ loginSuccess: true });
+      res.cookie("x_auth", user.token).status(200).json({ loginSuccess: true });
     });
+  });
+});
+
+// logout
+app.get("/api/user/logout", auth, (req, res) => {
+  User.findOneAndUpdate({ _id: req.user._id }, { token: "" }, (err, doc) => {
+    if (err) return res.json({ success: false, err });
+    return res.status(200).send({ success: true });
   });
 });
 
